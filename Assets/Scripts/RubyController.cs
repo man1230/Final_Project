@@ -9,6 +9,10 @@ public class RubyController : MonoBehaviour
     public float speed = 3.0f;
     
     public int maxHealth = 5;
+
+    public int ammo = 4;
+
+    public int goldCog = 0;
     
     public GameObject projectilePrefab;
     public GameObject hitPrefab;
@@ -16,6 +20,10 @@ public class RubyController : MonoBehaviour
     
     public AudioClip throwSound;
     public AudioClip hitSound;
+    public AudioClip robotFixed;
+    public AudioClip ammoPickup;
+    public AudioClip goldSound;
+    public AudioClip speedSound;
     
     public int health { get { return currentHealth; }}
     int currentHealth;
@@ -25,6 +33,10 @@ public class RubyController : MonoBehaviour
     public float timeInvincible = 2.0f;
     bool isInvincible;
     float invincibleTimer;
+
+    public float timeFast = 5.0f;
+    bool isFast = false;
+    float fastTimer;
     
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -39,9 +51,12 @@ public class RubyController : MonoBehaviour
     public Text restartText;
     public Text scoreText;
     public Text myName;
+    public Text ammoText;
+    public Text cogText;
 
     public int score = 0;
-    
+
+    public static int level = 1;    
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +70,14 @@ public class RubyController : MonoBehaviour
         winLoseText.text = "";
         restartText.text = "";
         myName.text = "";
+        cogText.text = "";
         scoreText.text = "Robots Fixed: " + score.ToString();
+        ammoText.text = "Cogs: " + ammo.ToString();
+
+        if (level == 2)
+        {
+            cogText.text = "Cog Pieces: " + goldCog.ToString();
+        }
     }
 
     // Update is called once per frame
@@ -82,12 +104,38 @@ public class RubyController : MonoBehaviour
             if (invincibleTimer < 0)
                 isInvincible = false;
         }
+
+        if (isFast == true)
+        {
+            fastTimer -= Time.deltaTime;
+            if (fastTimer < 0) 
+            {
+                isFast = false;
+                speed -= 2;
+            }
+        }
         
         if(Input.GetKeyDown(KeyCode.C))
         {
-            Launch();
+            if (ammo > 0)
+            {
+                Launch();
+                ammo--;
+                ammoText.text = "Cogs: " + ammo.ToString();
+            }
+            
         }
         
+        if (level == 2 && score == 4 && goldCog == 4)
+        {
+            gameWin = true;
+            speed = 0;
+
+            winLoseText.text = "You Win!!!";
+            myName.text = "Made by Marcus Napoleoni";
+            restartText.text = "Press 'R' to Try Again.";
+        }
+
         if (Input.GetKeyDown(KeyCode.X))
         {
             RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
@@ -96,6 +144,12 @@ public class RubyController : MonoBehaviour
                 NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
                 if (character != null)
                 {
+                    if (score >= 4)
+                    {
+                        level++;
+
+                        SceneManager.LoadScene("Stage2");
+                    }
                     character.DisplayDialog();
                 }
             }
@@ -158,17 +212,13 @@ public class RubyController : MonoBehaviour
     public void ChangeScore()
     {
         score++;
+        PlaySound(robotFixed);
 
         scoreText.text = "Robots Fixed: " + score.ToString();
 
-        if (score == 4)
+        if (score == 4 && level == 1)
         {
-            gameWin = true;
-            speed = 0;
-
-            winLoseText.text = "You Win!!!";
-            myName.text = "Made by Marcus Napoleoni";
-            restartText.text = "Press 'R' to Try Again.";
+            myName.text = "Talk to Jambi to continue";
         }
     }
     
@@ -187,5 +237,35 @@ public class RubyController : MonoBehaviour
     public void PlaySound(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.tag == "Ammo")
+        {
+            PlaySound(ammoPickup);
+            ammo += 4;
+            ammoText.text = "Cogs: " + ammo.ToString();
+            Destroy(col.gameObject);
+        }
+
+        if (col.collider.tag == "Gold")
+        {
+            PlaySound(goldSound);
+            goldCog++;
+            cogText.text = "Cog Pieces: " + goldCog.ToString();
+            Destroy(col.gameObject);
+        }
+
+        if (col.collider.tag == "SpeedUp")
+        {
+            PlaySound(speedSound);
+            
+            speed += 2;
+            Destroy(col.gameObject);
+
+            isFast = true;
+            fastTimer = timeFast;
+        }
     }
 }

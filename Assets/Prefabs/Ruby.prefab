@@ -101,6 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   maxHealth: 5
+  ammo: 4
+  goldCog: 0
   projectilePrefab: {fileID: 4875036648808000621, guid: bcef562946dda12418868819d2d38347,
     type: 3}
   hitPrefab: {fileID: 2032333772070904728, guid: fcf94d7ff41d8ea4fbab978cce19df01,
@@ -109,11 +111,20 @@ MonoBehaviour:
     type: 3}
   throwSound: {fileID: 8300000, guid: 037aee90aa186784dadb50a9d92e30b9, type: 3}
   hitSound: {fileID: 8300000, guid: dd573be58aa5e644896cb4beea4f5e79, type: 3}
+  robotFixed: {fileID: 8300000, guid: 631a336f47873cd4ca53015355cad775, type: 3}
+  ammoPickup: {fileID: 8300000, guid: e19223d340c7bee4791f56e523194f9c, type: 3}
+  goldSound: {fileID: 8300000, guid: f92caa5815024ab4bb25fdd9b49f0474, type: 3}
+  speedSound: {fileID: 8300000, guid: d1ba8d571fdd2764a97e287e7b360177, type: 3}
+  gameOver: 0
+  gameWin: 0
   timeInvincible: 2
+  timeFast: 5
   winLoseText: {fileID: 0}
   restartText: {fileID: 0}
   scoreText: {fileID: 0}
   myName: {fileID: 0}
+  ammoText: {fileID: 0}
+  cogText: {fileID: 0}
   score: 0
 --- !u!50 &1959370249475143439
 Rigidbody2D:

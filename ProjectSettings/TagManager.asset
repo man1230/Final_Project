@@ -6,6 +6,9 @@ TagManager:
   tags:
   - RubyController
   - Enemy
+  - Ammo
+  - Gold
+  - SpeedUp
   layers:
   - Default
   - TransparentFX
